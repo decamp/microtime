@@ -1,6 +1,6 @@
-<project name="microtime" default="dist" basedir=".">
+<project name="name_of_thing" default="app" basedir=".">
 	<description>
-		Builds microtime library.
+		Builds something.
   </description>
 
 	<!-- set global properties for this build -->
@@ -10,7 +10,7 @@
 	<property name="app.main"    value="" />
 	<property name="app.icon"	   value="" />
 
-	<property name="domain.name"  value="commons" />
+	<property name="domain.name"  value="cogmac" />
 	<property name="dist.dir"	    value="dist" />
 	<property name="dist.name"    value="${domain.name}_${ant.project.name}" />
 	<property name="src.dir"  	  value="src" />
@@ -22,8 +22,6 @@
 	<property name="test.build.dir"      value="build_test" />
 	
 	<property name="resources.build.dir" value="resources_build" />
-	
-	<property name="vcs" value="git" />
 	
 	
 	<path id="classpath">
@@ -69,7 +67,7 @@
 	</target>
 	
 	
-	<target name="dist" depends="compile,vcs" description="generate the jar file" >
+	<target name="dist" depends="compile,git" description="generate the jar file" >
 		<mkdir dir="${dist.dir}" />
 		
 		<manifest file="MANIFEST.MF">
@@ -145,9 +143,6 @@
 	
 	
 	<!-- Version Control Stuff -->
-	<target name="vcs">
-		<antcall target="${vcs}"/>
-	</target>
 	
 	
 	<!-- SVN Targets -->
