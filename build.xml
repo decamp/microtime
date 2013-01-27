@@ -1,6 +1,6 @@
-<project name="name_of_thing" default="app" basedir=".">
+<project name="microtime" default="dist" basedir=".">
 	<description>
-		Builds something.
+		Builds microtime library.
   </description>
 
 	<!-- set global properties for this build -->
