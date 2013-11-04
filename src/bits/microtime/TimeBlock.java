@@ -389,7 +389,7 @@ public class TimeBlock implements TimeRanged {
     
     @Deprecated
     public static TimeBlock fromTimeRanged(TimeRanged tr) {
-        return new TimeBlock(tr.getStartMicros(), tr.getStopMicros());
+        return new TimeBlock(tr.startMicros(), tr.stopMicros());
     }
 
     

@@ -6,6 +6,9 @@ import java.util.Comparator;
  * @author Philip DeCamp  
  */
 public interface TimeRanged extends TimeStamped {
+    
+    public long startMicros();
+    public long stopMicros();
 
     
     public static final Comparator<TimeRanged> STOP_TIME_ORDER = new Comparator<TimeRanged>() {
@@ -43,17 +46,5 @@ public interface TimeRanged extends TimeStamped {
             return 0;
         }
     };
-    
-    
-    public long startMicros();
-    public long stopMicros();
-    
-    
-    @Deprecated
-    public long getStartMicros();
-    
-    
-    @Deprecated
-    public long getStopMicros();
     
 }
