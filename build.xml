@@ -6,20 +6,20 @@
 	<!-- set global properties for this build -->
 	<property name="compile.target"	value="1.5" />
 		
-	<property name="app.name"    value="" />
-	<property name="app.main"    value="" />
-	<property name="app.icon"	   value="" />
+	<property name="app.name"       value="" />
+	<property name="app.main"       value="" />
+	<property name="app.icon"       value="" />
 
-	<property name="domain.name"  value="cogmac" />
+	<property name="domain.name"    value="bits" />
 	<property name="dist.dir"	    value="dist" />
-	<property name="dist.name"    value="${domain.name}_${ant.project.name}" />
-	<property name="src.dir"  	  value="src" />
-	<property name="build.dir" 	  value="build" />
-	<property name="lib.dir"      value="lib" />
-  <property name="resource.dir" value="resources" />
+	<property name="dist.name"      value="${domain.name}_${ant.project.name}" />
+	<property name="src.dir"  	    value="src" />
+	<property name="build.dir" 	    value="build" />
+	<property name="lib.dir"        value="lib" />
+    <property name="resource.dir"   value="resources" />
 
-	<property name="test.src.dir"        value="src_test" />
-	<property name="test.build.dir"      value="build_test" />
+	<property name="test.src.dir"   value="src_test" />
+	<property name="test.build.dir" value="build_test" />
 	
 	<property name="resources.build.dir" value="resources_build" />
 	
@@ -28,7 +28,7 @@
 		<fileset dir="${lib.dir}">
 			<include name="*.jar"/>
 		</fileset>
-  </path>
+    </path>
 	
 		
 	<!-- Project specific targets -->

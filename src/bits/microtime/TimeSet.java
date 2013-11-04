@@ -1,4 +1,4 @@
-package cogmac.microtime;
+package bits.microtime;
 
 import java.lang.reflect.Array;
 import java.util.*;

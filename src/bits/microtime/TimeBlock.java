@@ -1,4 +1,4 @@
-package cogmac.microtime;
+package bits.microtime;
 
 import java.text.DateFormat;
 import java.util.*;
