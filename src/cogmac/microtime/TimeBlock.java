@@ -32,8 +32,13 @@ public class TimeBlock implements TimeRanged {
     
     
     public TimeBlock( long startMicros, long stopMicros ) {
-        mStartMicros = startMicros <= stopMicros ? startMicros : stopMicros;
-        mStopMicros  = startMicros <= stopMicros ? stopMicros  : startMicros;
+        if( startMicros <= stopMicros ) {
+            mStartMicros = startMicros;
+            mStopMicros  = stopMicros;
+        } else {
+            mStartMicros = stopMicros;
+            mStopMicros  = startMicros;
+        }
     }
     
 
@@ -147,7 +152,7 @@ public class TimeBlock implements TimeRanged {
             //This is only true if t1 == t2, in which case t2 IS in the set,
             //despite being half-open.
             if( t1 == mStartMicros ) {
-                return TimeBlock.fromMicros( t1, t1 );
+                return new TimeBlock( t1, t1 );
             } else {
                 return null;
             }
@@ -386,8 +391,6 @@ public class TimeBlock implements TimeRanged {
     public static TimeBlock fromTimeRanged(TimeRanged tr) {
         return new TimeBlock(tr.getStartMicros(), tr.getStopMicros());
     }
-    
-        
 
     
 }

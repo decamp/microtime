@@ -17,12 +17,6 @@ public class TimeUtil {
     public static final String FORMAT_SECOND_TIMEZONE      = "yyyy-MM-dd HH:mm:ss z";
     public static final String FORMAT_MILLISECOND_TIMEZONE = "yyyy-MM-dd HH:mm:ss.SSS z";
     
-    public static final TimeZone ZONE_UTC         = TimeZone.getTimeZone( "UTC" );
-    public static final TimeZone ZONE_US_PACIFIC  = TimeZone.getTimeZone( "US/Pacific" );
-    public static final TimeZone ZONE_US_MOUNTAIN = TimeZone.getTimeZone( "US/Mountain" );
-    public static final TimeZone ZONE_US_CENTRAL  = TimeZone.getTimeZone( "US/Central" );
-    public static final TimeZone ZONE_US_EASTERN  = TimeZone.getTimeZone( "US/Eastern" );
-    
     
     public static DateFormat formatter( String format, TimeZone tz ) {
         SimpleDateFormat result = new SimpleDateFormat( format );
@@ -45,7 +39,11 @@ public class TimeUtil {
     
     
     
-    
+    @Deprecated public static final TimeZone ZONE_UTC         = TimeZone.getTimeZone( "UTC" );
+    @Deprecated public static final TimeZone ZONE_US_PACIFIC  = TimeZone.getTimeZone( "US/Pacific" );
+    @Deprecated public static final TimeZone ZONE_US_MOUNTAIN = TimeZone.getTimeZone( "US/Mountain" );
+    @Deprecated public static final TimeZone ZONE_US_CENTRAL  = TimeZone.getTimeZone( "US/Central" );
+    @Deprecated public static final TimeZone ZONE_US_EASTERN  = TimeZone.getTimeZone( "US/Eastern" );
     
     @Deprecated public static final String     SECOND_FORMAT_STRING           = "yyyy-MM-dd HH:mm:ss";
     @Deprecated public static final String     MILLISECOND_FORMAT_STRING      = "yyyy-MM-dd HH:mm:ss.SSS";

@@ -933,7 +933,7 @@ public class TimeSet implements Set<TimeBlock> {
     }
 
 
-
+    
     private static class Node {
         public final long mStart;
         public final long mStop;
