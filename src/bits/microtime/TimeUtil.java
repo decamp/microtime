@@ -17,6 +17,9 @@ public class TimeUtil {
     public static final String FORMAT_SECOND_TIMEZONE      = "yyyy-MM-dd HH:mm:ss z";
     public static final String FORMAT_MILLISECOND_TIMEZONE = "yyyy-MM-dd HH:mm:ss.SSS z";
     
+    public static final DateFormat FORMAT_SECOND_UTC       = formatter( FORMAT_SECOND, TimeZone.getTimeZone( "UTC" ) ); 
+    public static final DateFormat FORMAT_MILLISECOND_UTC  = formatter( FORMAT_MILLISECOND, TimeZone.getTimeZone( "UTC" ) );
+    
     
     public static DateFormat formatter( String format, TimeZone tz ) {
         SimpleDateFormat result = new SimpleDateFormat( format );
