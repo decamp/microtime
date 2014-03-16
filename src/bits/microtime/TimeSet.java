@@ -9,7 +9,7 @@ import java.util.*;
  * 
  * @author Philip DeCamp
  */
-public class TimeSet implements Set<TimeBlock> {
+public class TimeSet extends AbstractSet<TimeBlock> {
 
     private Node mRoot     = null;
     private int  mSize     = 0;
@@ -17,29 +17,29 @@ public class TimeSet implements Set<TimeBlock> {
 
     
     public TimeSet() {}
-
     
     
+    @Override
     public boolean add( TimeBlock tb ) {
-        if( tb == null ) return false;
-        
+        if( tb == null ) {
+            return false;
+        }
         return add( tb.startMicros(), tb.stopMicros() );
     }
 
 
     public boolean add( long startMicros, long stopMicros ) {
-        if( stopMicros <= startMicros )
+        if( stopMicros <= startMicros ) {
             return false;
+        }
 
         Node node = mRoot;
-
         if( node == null ) {
             Node newNode = new Node( startMicros, stopMicros );
             insertNode( newNode, null, false );
             return true;
         }
-
-
+        
         // Find highest-level node that intersects with time.
         while( true ) {
             if( node.mStart > stopMicros ) {
@@ -57,7 +57,7 @@ public class TimeSet implements Set<TimeBlock> {
                     insertNode( n, node, false );
                     return true;
                 }
-
+                
                 node = node.mRight;
 
             } else if( node.mStart <= startMicros && node.mStop >= stopMicros ) {
@@ -77,14 +77,16 @@ public class TimeSet implements Set<TimeBlock> {
             while( true ) {
                 if( node.mStart > stopMicros || node.mStop < startMicros ) {
                     // No intersection. Go right.
-                    if( node.mRight == null )
+                    if( node.mRight == null ) {
                         break;
+                    }
 
                     node = node.mRight;
                 } else {
                     // No intersection. Go left.
-                    if( node.mLeft == null )
+                    if( node.mLeft == null ) {
                         break;
+                    }
 
                     node = node.mLeft;
                 }
@@ -92,8 +94,9 @@ public class TimeSet implements Set<TimeBlock> {
         }
 
         // Go forward to the first one that actually intersects.
-        while( node.mStop < startMicros )
+        while( node.mStop < startMicros ) {
             node = nextNode( node );
+        }
 
         // Remove intersecting nodes, updating the time bounds in the process.
         while( node != null && node.mStart <= stopMicros ) {
@@ -103,11 +106,13 @@ public class TimeSet implements Set<TimeBlock> {
             Node next = nextNode( node );
 
             // Expand bounds and delete node.
-            if( node.mStart < startMicros )
+            if( node.mStart < startMicros ) {
                 startMicros = node.mStart;
+            }
 
-            if( node.mStop > stopMicros )
+            if( node.mStop > stopMicros ) {
                 stopMicros = node.mStop;
+            }
 
             removeNode( node );
             node = next;
@@ -117,59 +122,55 @@ public class TimeSet implements Set<TimeBlock> {
         insertDisjoint( startMicros, stopMicros );
         return true;
     }
+    
 
-
-    public boolean addAll( Collection<? extends TimeBlock> c ) {
-        boolean ret = false;
-
-        for( TimeBlock tb : c ) {
-            ret |= add( tb );
-        }
-
-        return ret;
-    }
-
-
+    @Override
     public boolean remove( Object timeBlock ) {
-        if( ! ( timeBlock instanceof TimeBlock) )
+        if( ! ( timeBlock instanceof TimeBlock) ) {
             return false;
-
+        }
         TimeBlock tb = (TimeBlock) timeBlock;
         return remove( tb.startMicros(), tb.stopMicros() );
     }
 
 
     public boolean remove( long startMicros, long stopMicros ) {
-        if( stopMicros <= startMicros )
+        if( stopMicros <= startMicros ) {
             return false;
+        }
 
         Node node = mRoot;
 
-        if( node == null )
+        if( node == null ) {
             return false;
+        }
 
         // Find highest-level node that intersects with time.
         while( true ) {
             if( node.mStart > stopMicros ) {
-                if( node.mLeft == null )
+                if( node.mLeft == null ) {
                     return false;
+                }
 
                 node = node.mLeft;
 
             } else if( node.mStop < startMicros ) {
-                if( node.mRight == null )
+                if( node.mRight == null ) {
                     return false;
+                }
 
                 node = node.mRight;
 
             } else if( node.mStart <= startMicros && node.mStop >= stopMicros ) {
                 // Portion to be removed lies entirely in one TimeBlock.
                 removeNode( node );
-                if( node.mStart < startMicros )
+                if( node.mStart < startMicros ) {
                     insertDisjoint( node.mStart, startMicros );
+                }
 
-                if( stopMicros < node.mStop )
+                if( stopMicros < node.mStop ) {
                     insertDisjoint( stopMicros, node.mStop );
+                }
 
                 return true;
 
@@ -186,14 +187,16 @@ public class TimeSet implements Set<TimeBlock> {
             while( true ) {
                 if( node.mStart > stopMicros || node.mStop < startMicros ) {
                     // No intersection. Go right.
-                    if( node.mRight == null )
+                    if( node.mRight == null ) {
                         break;
+                    }
 
                     node = node.mRight;
                 } else {
                     // No intersection. Go left.
-                    if( node.mLeft == null )
+                    if( node.mLeft == null ) {
                         break;
+                    }
 
                     node = node.mLeft;
                 }
@@ -201,8 +204,9 @@ public class TimeSet implements Set<TimeBlock> {
         }
 
         // Go forward to the first one that actually intersects.
-        while( node.mStop < startMicros )
+        while( node.mStop < startMicros ) {
             node = nextNode( node );
+        }
 
 
         // Remove or trim intersecting nodes.
@@ -231,22 +235,18 @@ public class TimeSet implements Set<TimeBlock> {
     }
 
 
+    @Override
     public boolean removeAll( Collection<?> c ) {
         boolean ret = false;
-
         for( Object obj : c ) {
             ret |= remove( obj );
         }
-
+        
         return ret;
     }
+    
 
-
-    public boolean retainAll( Collection<?> c ) {
-        throw new UnsupportedOperationException();
-    }
-
-
+    @Override
     public void clear() {
         mRoot = null;
         mSize = 0;
@@ -254,19 +254,23 @@ public class TimeSet implements Set<TimeBlock> {
     }
 
 
+    @Override
     public boolean isEmpty() {
         return mRoot == null;
     }
 
 
+    @Override
     public int size() {
         return mSize;
     }
 
 
+    @Override
     public boolean contains( Object timeBlock ) {
-        if( ! ( timeBlock instanceof TimeBlock) )
+        if( ! ( timeBlock instanceof TimeBlock ) ) {
             return false;
+        }
 
         TimeBlock tb = (TimeBlock) timeBlock;
         return contains( tb.startMicros(), tb.stopMicros() );
@@ -305,19 +309,12 @@ public class TimeSet implements Set<TimeBlock> {
 
         return false;
     }
-
-
-    public boolean containsAll( Collection<?> c ) {
-        for( Object obj : c ) {
-            if( !contains( obj ) )
-                return false;
-        }
-
-        return true;
-    }
-
-
-    public TimeBlock getContainingBlock( long timeMicro ) {
+    
+    /**
+     * @param timeMicro
+     * @return the contiguous TimeBlock in this set containing timeMicro, or null if none.
+     */
+    public TimeBlock blockContaining( long timeMicro ) {
         Node node = mRoot;
 
         while( node != null ) {
@@ -333,23 +330,22 @@ public class TimeSet implements Set<TimeBlock> {
         return null;
     }
 
-
     /**
-     * Returns the smallest TimeBlock that is a superset of this TimeSte.
+     * Returns the smallest TimeBlock that is a superset of this TimeSet.
      * 
      * @return superset of TimeSet, or NULL if TimeSet is empty.
      */
-    public TimeBlock getSupersetBlock() {
+    public TimeBlock range() {
         Node first = firstNode();
-        Node last = lastNode();
-
-        if( first == null || last == null )
+        Node last  = lastNode();
+        if( first == null || last == null ) {
             return null;
-
+        }
         return new TimeBlock( first.mStart, last.mStop );
     }
+    
 
-
+    @Override
     public Iterator<TimeBlock> iterator() {
         return new TimeIterator();
     }
@@ -447,6 +443,7 @@ public class TimeSet implements Set<TimeBlock> {
     }
 
 
+    @Override
     public TimeBlock[] toArray() {
         TimeBlock[] ret = new TimeBlock[mSize];
         Node node = firstNode();
@@ -460,11 +457,13 @@ public class TimeSet implements Set<TimeBlock> {
     }
 
 
+    @Override
     @SuppressWarnings( "unchecked" )
     public <T> T[] toArray( T[] a ) {
         Class<?> c = a.getClass().getComponentType();
-        if( !c.isAssignableFrom( TimeBlock.class ) )
+        if( !c.isAssignableFrom( TimeBlock.class ) ) {
             throw new ArrayStoreException();
+        }
 
         if( a.length < mSize ) {
             a = (T[]) Array.newInstance( a.getClass().getComponentType(), mSize );
@@ -609,8 +608,9 @@ public class TimeSet implements Set<TimeBlock> {
         // it with a node that has at most one child.
         if( node.mLeft != null && node.mRight != null ) {
             Node swapNode = node.mLeft;
-            while( swapNode.mRight != null )
+            while( swapNode.mRight != null ) {
                 swapNode = swapNode.mRight;
+            }
 
             swapNodes( node, swapNode );
         }
@@ -624,8 +624,9 @@ public class TimeSet implements Set<TimeBlock> {
         node = ( node.mLeft == null ? node.mRight : node.mLeft);
 
         // Set parent of child node to be newParent.
-        if( node != null )
+        if( node != null ) {
             node.mParent = newParent;
+        }
 
         // Set child of newParent to node.
         if( newParent == null ) {
@@ -641,8 +642,9 @@ public class TimeSet implements Set<TimeBlock> {
         }
 
         // If oldParent was RED, the constraints will be maintained.
-        if( oldParent.mColor == RED )
+        if( oldParent.mColor == RED ) {
             return;
+        }
 
         // If the oldParent is BLACK and the node is RED, we swap colors.
         if( node != null && node.mColor == RED ) {
@@ -655,8 +657,9 @@ public class TimeSet implements Set<TimeBlock> {
         while( true ) {
 
             // Case 1: node is new root. We're done.
-            if( newParent == null )
+            if( newParent == null ) {
                 return;
+            }
 
             // Case 2: Sibling is RED. Reverse newParent and sibling colors and
             // rotate at newParent. (If tree was balanced before,
@@ -731,12 +734,14 @@ public class TimeSet implements Set<TimeBlock> {
 
     private void rotateLeft( Node node ) {
         Node right = node.mRight;
-        if( right == null )
+        if( right == null ) {
             return;
+        }
 
         node.mRight = right.mLeft;
-        if( node.mRight != null )
+        if( node.mRight != null ) {
             node.mRight.mParent = node;
+        }
 
         right.mLeft = node;
 
@@ -759,14 +764,16 @@ public class TimeSet implements Set<TimeBlock> {
 
     private void rotateRight( Node node ) {
         Node left = node.mLeft;
-        if( left == null )
+        if( left == null ) {
             return;
+        }
 
         node.mLeft = left.mRight;
         left.mRight = node;
 
-        if( node.mLeft != null )
+        if( node.mLeft != null ) {
             node.mLeft.mParent = node;
+        }
 
         if( node == mRoot ) {
             mRoot = left;
@@ -786,24 +793,28 @@ public class TimeSet implements Set<TimeBlock> {
 
 
     private Node firstNode() {
-        if( mRoot == null )
+        if( mRoot == null ) {
             return null;
+        }
 
         Node node = mRoot;
-        while( node.mLeft != null )
+        while( node.mLeft != null ) {
             node = node.mLeft;
+        }
 
         return node;
     }
 
 
     private Node lastNode() {
-        if( mRoot == null )
+        if( mRoot == null ) {
             return null;
+        }
 
         Node node = mRoot;
-        while( node.mRight != null )
+        while( node.mRight != null ) {
             node = node.mRight;
+        }
 
         return node;
     }
@@ -813,12 +824,14 @@ public class TimeSet implements Set<TimeBlock> {
         if( node.mRight != null ) {
             node = node.mRight;
 
-            while( node.mLeft != null )
+            while( node.mLeft != null ) {
                 node = node.mLeft;
+            }
 
         } else {
-            while( node.mParent != null && node.mParent.mRight == node )
+            while( node.mParent != null && node.mParent.mRight == node ) {
                 node = node.mParent;
+            }
 
             node = node.mParent;
         }
@@ -846,16 +859,19 @@ public class TimeSet implements Set<TimeBlock> {
 
             a.mLeft = b.mLeft;
             b.mLeft = a;
-            if( a.mLeft != null )
+            if( a.mLeft != null ) {
                 a.mLeft.mParent = a;
+            }
 
             tempNode = a.mRight;
             a.mRight = b.mRight;
             b.mRight = tempNode;
-            if( a.mRight != null )
+            if( a.mRight != null ) {
                 a.mRight.mParent = a;
-            if( b.mRight != null )
+            }
+            if( b.mRight != null ) {
                 b.mRight.mParent = b;
+            }
 
             b.mParent = a.mParent;
             a.mParent = b;
@@ -871,16 +887,19 @@ public class TimeSet implements Set<TimeBlock> {
         } else if( a.mRight == b ) {
             a.mRight = b.mRight;
             b.mRight = a;
-            if( a.mRight != null )
+            if( a.mRight != null ) {
                 a.mRight.mParent = a;
+            }
 
             tempNode = a.mLeft;
             a.mLeft = b.mLeft;
             b.mLeft = tempNode;
-            if( a.mLeft != null )
+            if( a.mLeft != null ) {
                 a.mLeft.mParent = a;
-            if( b.mLeft != null )
+            }
+            if( b.mLeft != null ) {
                 b.mLeft.mParent = b;
+            }
 
             b.mParent = a.mParent;
             a.mParent = b;
@@ -897,18 +916,22 @@ public class TimeSet implements Set<TimeBlock> {
             tempNode = a.mLeft;
             a.mLeft = b.mLeft;
             b.mLeft = tempNode;
-            if( a.mLeft != null )
+            if( a.mLeft != null ) {
                 a.mLeft.mParent = a;
-            if( b.mLeft != null )
+            }
+            if( b.mLeft != null ) {
                 b.mLeft.mParent = b;
+            }
 
             tempNode = a.mRight;
             a.mRight = b.mRight;
             b.mRight = tempNode;
-            if( a.mRight != null )
+            if( a.mRight != null ) {
                 a.mRight.mParent = a;
-            if( b.mRight != null )
+            }
+            if( b.mRight != null ) {
                 b.mRight.mParent = b;
+            }
 
             tempNode = a.mParent;
             a.mParent = b.mParent;
@@ -938,17 +961,15 @@ public class TimeSet implements Set<TimeBlock> {
         public final long mStart;
         public final long mStop;
 
-        public boolean    mColor  = RED;
-        public Node       mParent = null;
-        public Node       mLeft   = null;
-        public Node       mRight  = null;
-
-
+        public boolean mColor  = RED;
+        public Node    mParent = null;
+        public Node    mLeft   = null;
+        public Node    mRight  = null;
+        
         public Node( long start, long stop ) {
             mStart = start;
             mStop = stop;
         }
-
     }
 
 
@@ -960,20 +981,24 @@ public class TimeSet implements Set<TimeBlock> {
 
     private class TimeIterator implements Iterator<TimeBlock> {
 
-        private int  mmModCount = mModCount;
-        private Node mPrev      = null;
-        private Node mNext      = firstNode();
+        private int  mIterMod = mModCount;
+        private Node mPrev    = null;
+        private Node mNext    = firstNode();
 
+        @Override
         public boolean hasNext() {
             return mNext != null;
         }
 
+        @Override
         public TimeBlock next() {
-            if( mNext == null )
+            if( mNext == null ) {
                 throw new NoSuchElementException();
+            }
 
-            if( mModCount != mmModCount )
+            if( mModCount != mIterMod ) {
                 throw new ConcurrentModificationException();
+            }
 
             TimeBlock ret = new TimeBlock( mNext.mStart, mNext.mStop );
             mPrev = mNext;
@@ -982,19 +1007,51 @@ public class TimeSet implements Set<TimeBlock> {
             return ret;
         }
 
+        @Override
         public void remove() {
-            if( mPrev == null )
+            if( mPrev == null ) {
                 throw new IllegalStateException();
+            }
 
-            if( mModCount != mmModCount )
+            if( mModCount != mIterMod ) {
                 throw new ConcurrentModificationException();
+            }
 
             removeNode( mPrev );
             mPrev = null;
-
-            mmModCount = mModCount;
+            mIterMod = mModCount;
         }
 
     }
 
+    
+    /**
+     * Returns the smallest TimeBlock that is a superset of this TimeSet.
+     * 
+     * @return superset of TimeSet, or NULL if TimeSet is empty.
+     * @deprecated Use range()
+     */
+    @Deprecated public TimeBlock getSupersetBlock() {
+        return range();
+    }
+    
+    /**
+     * @deprecated Use blockContaining()
+     */
+    @Deprecated public TimeBlock getContainingBlock( long timeMicro ) {
+        Node node = mRoot;
+
+        while( node != null ) {
+            if( timeMicro < node.mStart ) {
+                node = node.mLeft;
+            } else if( timeMicro >= node.mStop ) {
+                node = node.mRight;
+            } else {
+                return new TimeBlock( node.mStart, node.mStop );
+            }
+        }
+
+        return null;
+    }
+    
 }
