@@ -10,30 +10,39 @@ import bits.util.event.*;
  */
 public class PlayController {
 
+    /**
+     * @param masterClock  Clock used by this controller. If clock requires updating, this must be performed by the user.
+     * @return playback controller that does not update clock itself
+     */
+    public static PlayController create( Clock masterClock ) {
+        FullClock state = new FullClock( masterClock );
+        return new PlayController( null, state, Mode.AUTO, 0, 0, 1.0 );
+    }
 
     /**
      * @return a PlayController that does not require time updates.
      */
-    public static PlayController newAutoInstance() {
+    public static PlayController createAuto() {
         FullClock state = new FullClock( Clock.SYSTEM_CLOCK );
         return new PlayController( null, state, Mode.AUTO, 0, 0, 1.0 );
     }
 
     /**
-     * @return a PlaybackContoller that syncs time to the system clock on each
-     *         time update.
+     * @return a PlaybackContoller that syncs time to the system clock on each time update.
      */
-    public static PlayController newRealtimeInstance() {
+    public static PlayController createRealtime() {
         ManualClock clock = new ManualClock( System.currentTimeMillis() * 1000L );
         FullClock state = new FullClock( clock );
         return new PlayController( clock, state, Mode.REALTIME, Long.MIN_VALUE, 0, 1.0 );
     }
 
     /**
-     * @return a PlaybackContoller that syncs time to the system clock on each
-     *         time update.
+     * @param startMicros  Time of clock upon first update.
+     * @param rate         Rate of time relative to real time.
+     *
+     * @return a PlaybackContoller that syncs time to the system clock on each time update.
      */
-    public static PlayController newRealtimeInstance( long startMicros, double rate ) {
+    public static PlayController createRealtime( long startMicros, double rate ) {
         ManualClock clock = new ManualClock( startMicros );
         FullClock state = new FullClock( clock );
 
@@ -45,27 +54,14 @@ public class PlayController {
     }
 
     /**
-     * @param startMicros
-     *            Start micros of play clock.
-     * @param stepMicros
-     *            Amount to increment play clock on each update.
-     * @return a PlayController that steps time by a set amount on each time
-     *         update.
+     * @param startMicros  Start micros of play clock.
+     * @param stepMicros   Amount to increment play clock on each update.
+     * @return a PlayController with a clock that increments by a set amount on each updatem.
      */
-    public static PlayController newSteppingInstance( long startMicros, long stepMicros ) {
+    public static PlayController createStepping( long startMicros, long stepMicros ) {
         ManualClock clock = new ManualClock( startMicros );
         FullClock state = new FullClock( clock );
         return new PlayController( clock, state, Mode.STEPPING, startMicros, stepMicros, 1.0 );
-    }
-
-    /**
-     * @param masterClock
-     *            Play clock for this PlayController.
-     * @return playback controller that does not update clock itself.
-     */
-    public static PlayController newInstance( Clock masterClock ) {
-        FullClock state = new FullClock( masterClock );
-        return new PlayController( null, state, Mode.AUTO, 0, 0, 1.0 );
     }
 
 
@@ -73,7 +69,7 @@ public class PlayController {
         AUTO,
         STEPPING,
         REALTIME,
-        REALTIME_SCALED;
+        REALTIME_SCALED
     }
 
 
@@ -178,7 +174,7 @@ public class PlayController {
             return;
         }
 
-        mUpdateClock.setMicros( t );
+        mUpdateClock.micros( t );
     }
 
 
@@ -237,6 +233,32 @@ public class PlayController {
             mCastOut.setRate( execMicros, rate );
         }
 
+    }
+
+
+
+    @Deprecated public static PlayController newAutoInstance() {
+        return createAuto();
+    }
+
+
+    @Deprecated public static PlayController newRealtimeInstance() {
+        return createRealtime();
+    }
+
+
+    @Deprecated public static PlayController newRealtimeInstance( long startMicros, double rate ) {
+        return createRealtime( startMicros, rate );
+    }
+
+
+    @Deprecated public static PlayController newSteppingInstance( long startMicros, long stepMicros ) {
+        return createStepping( startMicros, stepMicros );
+    }
+
+
+    @Deprecated public static PlayController newInstance( Clock masterClock ) {
+        return create( masterClock );
     }
 
 }

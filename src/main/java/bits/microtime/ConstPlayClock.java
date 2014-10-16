@@ -26,6 +26,7 @@ public class ConstPlayClock implements PlayClock {
         mRate = copy.rate();
     }
 
+
     public ConstPlayClock( boolean playing,
                            long micros,
                            long masterMicros,

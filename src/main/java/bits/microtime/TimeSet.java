@@ -311,7 +311,6 @@ public class TimeSet extends AbstractSet<TimeBlock> {
     }
     
     /**
-     * @param timeMicro
      * @return the contiguous TimeBlock in this set containing timeMicro, or null if none.
      */
     public TimeBlock blockContaining( long timeMicro ) {
@@ -488,7 +487,7 @@ public class TimeSet extends AbstractSet<TimeBlock> {
         Node node = mRoot;
 
         if( node == null ) {
-            insertNode( newNode, node, false );
+            insertNode( newNode, null, false );
             return;
         }
 

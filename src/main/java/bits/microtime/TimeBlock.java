@@ -16,7 +16,7 @@ import bits.util.Dates;
  *
  * TimeBlocks are created by factory methods. All times are in MICROSECONDS since the epoch.
  * 
- * TimeBlocks are a drop-in replacement for edu.mit.media.cogmac.time.TimeBlock, with the
+ * TimeBlocks are a drop-in replacement for edu.mit.media.bits.time.TimeBlock, with the
  * caveat that these TimeBlocks may have zero spans.
  * 
  * TimeBlock also provides a number of useful constants:
