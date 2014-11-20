@@ -1,5 +1,5 @@
 ### Microtime
-Time related utilities based around having all timestamps in microseconds.
+Time related utilities, clock interfaces, clock control interfaces. Everything is in microseconds.
 
 ### Build:
 $ ant
