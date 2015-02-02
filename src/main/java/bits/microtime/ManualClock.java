@@ -38,5 +38,4 @@ public class ManualClock implements Clock {
         micros( micros );
     }
 
-
 }

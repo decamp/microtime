@@ -14,7 +14,7 @@ import bits.util.event.*;
  * 
  * @author decamp
  */
-public class PlayController {
+public class PlayController implements Ticker {
 
     /**
      * @param masterClock  Clock used by this controller. If clock requires updating, this must be performed by the user.
@@ -144,7 +144,7 @@ public class PlayController {
      * method has different effects depending on the how the PlaybackContoller
      * was constructed.
      */
-    public void updateClocks() {
+    public void tick() {
         long t = 0;
 
         switch( mMode ) {
@@ -241,6 +241,10 @@ public class PlayController {
 
     }
 
+
+    @Deprecated public void updateClocks() {
+        tick();
+    }
 
 
     @Deprecated public static PlayController newAutoInstance() {
