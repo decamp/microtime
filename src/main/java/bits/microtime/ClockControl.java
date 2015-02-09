@@ -6,9 +6,6 @@
 
 package bits.microtime;
 
-import bits.math3d.Frac;
-
-
 /**
  * Enables control of a clock. ClockControl provides control over three pieces of state:
  * <ul>

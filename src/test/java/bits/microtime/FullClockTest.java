@@ -6,7 +6,6 @@
 
 package bits.microtime;
 
-import bits.math3d.Frac;
 import bits.params.*;
 import bits.params.gui.*;
 
