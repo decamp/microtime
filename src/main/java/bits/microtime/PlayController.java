@@ -6,8 +6,6 @@
 
 package bits.microtime;
 
-import bits.util.event.*;
-
 
 /**
  * Manages state for playback time and time selection.
@@ -82,9 +80,6 @@ public class PlayController implements Ticker {
     private final ManualClock mUpdateClock;
     private final FullClock mFullClock;
 
-    private final EventCaster<PlayControl> mCaster;
-    private final PlayMaster mPlayMaster;
-
     private final Mode mMode;
     private final long mStartMicros;
     private final long mStepMicros;
@@ -104,9 +99,6 @@ public class PlayController implements Ticker {
         mUpdateClock = updateClock;
         mFullClock = state;
 
-        mCaster = EventCaster.create( PlayControl.class );
-        mPlayMaster = new PlayMaster( mCaster );
-
         mMode = mode;
         mStartMicros = startMicros;
         mStepMicros = stepMicros;
@@ -115,13 +107,8 @@ public class PlayController implements Ticker {
     
 
 
-    public AsyncPlayControl control() {
-        return mPlayMaster;
-    }
-
-    
-    public EventSource<PlayControl> caster() {
-        return mCaster;
+    public ClockControl control() {
+        return mFullClock;
     }
 
 
@@ -141,7 +128,7 @@ public class PlayController implements Ticker {
 
     /**
      * Causes PlaybackControllor to update clocks / play state. Calling this
-     * method has different effects depending on the how the PlaybackContoller
+     * method has different effects depending on the how the PlayController.
      * was constructed.
      */
     public void tick() {
@@ -183,92 +170,5 @@ public class PlayController implements Ticker {
         mUpdateClock.micros( t );
     }
 
-
-
-    private final class PlayMaster implements AsyncPlayControl {
-
-        private final PlayControl mCastOut;
-
-        PlayMaster( EventCaster<PlayControl> caster ) {
-            mCastOut = caster.cast();
-        }
-
-
-        public synchronized void playStart() {
-            playStart( mFullClock.masterMicros() );
-        }
-
-        public synchronized void playStart( long execMicros ) {
-            if( mFullClock.isPlaying() ) {
-                return;
-            }
-            mFullClock.playStart( execMicros );
-            mCastOut.playStart( execMicros );
-        }
-
-        public synchronized void playStop() {
-            playStop( mFullClock.masterMicros() );
-        }
-
-        public synchronized void playStop( long execMicros ) {
-            if( !mFullClock.isPlaying() ) {
-                return;
-            }
-            mFullClock.playStop( execMicros );
-            mCastOut.playStop( execMicros );
-        }
-
-        public synchronized void seek( long seekMicros ) {
-            seek( mFullClock.masterMicros(), seekMicros );
-        }
-
-        public synchronized void seek( long execMicros, long gotoMicros ) {
-            mFullClock.seek( execMicros, gotoMicros );
-            mCastOut.seek( execMicros, gotoMicros );
-        }
-
-        public synchronized void setRate( double rate ) {
-            setRate( mFullClock.masterMicros(), rate );
-        }
-
-        public synchronized void setRate( long execMicros, double rate ) {
-            if( mFullClock.rate() == rate ) {
-                return;
-            }
-            mFullClock.setRate( execMicros, rate );
-            mCastOut.setRate( execMicros, rate );
-        }
-
-    }
-
-
-    @Deprecated public void updateClocks() {
-        tick();
-    }
-
-
-    @Deprecated public static PlayController newAutoInstance() {
-        return createAuto();
-    }
-
-
-    @Deprecated public static PlayController newRealtimeInstance() {
-        return createRealtime();
-    }
-
-
-    @Deprecated public static PlayController newRealtimeInstance( long startMicros, double rate ) {
-        return createRealtime( startMicros, rate );
-    }
-
-
-    @Deprecated public static PlayController newSteppingInstance( long startMicros, long stepMicros ) {
-        return createStepping( startMicros, stepMicros );
-    }
-
-
-    @Deprecated public static PlayController newInstance( Clock masterClock ) {
-        return create( masterClock );
-    }
 
 }

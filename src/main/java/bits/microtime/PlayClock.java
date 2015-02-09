@@ -1,24 +1,30 @@
 /*
- * Copyright (c) 2014. Massachusetts Institute of Technology
+ * Copyright (c) 2015. Massachusetts Institute of Technology
  * Released under the BSD 2-Clause License
  * http://opensource.org/licenses/BSD-2-Clause
  */
 
 package bits.microtime;
 
-/**
- * Maintains state of clock that can be stopped and started or that has 
- * variable speed relative to some MASTER clock. A PlayClock has three basic
- * state variables: micros, isPlaying, rate.  
- * 
- * @author decamp
- */
-public interface PlayClock extends Clock {
+import bits.math3d.Frac;
+import bits.util.event.EventSource;
 
-    /**
-     * @return true iff playback state is playing
-     */
-    public boolean isPlaying();
+
+/**
+ * Represents a clock that can be paused and that can run at
+ * an arbitrary getRate compared to some reference clock.
+ *
+ * <p>PlayClocks actually have two possible references:
+ * <p>1. All PlayClocks have a "master clock" that should closely follow system time. <br>
+ * <p>2. Optionally, some PlayClocks may have a "parent PlayClock" that can provide for heirarchical
+ * control. While all clocks in a tree will base time readings on the master clock, their
+ * playback state can be affected by accessing any of it's parent clocks. Stopping a PlayClock
+ * will cause all children to stop, and doubling the getRate of a PlayClock will cause
+ * all it's children to double their rates.
+ *
+ * @author Philip DeCamp
+ */
+public interface PlayClock extends Clock, EventSource<SyncClockControl> {
 
     /**
      * @return time of this clock
@@ -26,21 +32,31 @@ public interface PlayClock extends Clock {
     public long micros();
 
     /**
+     * @return true iff playback state is playing
+     */
+    public boolean isPlaying();
+
+    /**
+     * @param out receives getRate of this clock relative to the master clock.
+     */
+    public void getRate( Frac out );
+
+
+    /**
      * @return current time of the master of this clock
      */
     public long masterMicros();
 
     /**
-     * @return time when playback state last changed.
+     * The master clock is considered the root timekeeping clock.
+     * The master clock: <br>
+     * SHOULD be in sync with a system clock, <br>
+     * SHOULD be linear and increasing, <br>
+     * SHOULD be useable for timing threads or external processes.
+     *
+     * @return clock The master of this PlayClock.
      */
-    public long syncMicros();
-
-    /**
-     * Time of the master clock when playback state last changed.
-     * 
-     * @return play time when the playback state last changed.
-     */
-    public long masterSyncMicros();
+    public Clock masterClock();
 
     /**
      * Computes the time on the master clock for a time on this PlayClock.
@@ -48,37 +64,51 @@ public interface PlayClock extends Clock {
      * <code>
      * ( dataMicros - dataStartMicros() ) / playbackRate() + playStartMicros();
      * </code>
-     * 
-     * @param micros
+     *
+     * @param micros Some time
      * @return playback time when data time would be displayed.
      */
-    public long toMasterMicros( long micros );
+    public long toMaster( long micros );
 
     /**
      * Computes the time on this PlayClock for a time on the master clock.
      * If <code>isPlaying()</code>, this is equivalent to: <br/>
-     * <code> 
+     * <code>
      * ( playMicros - playStartMicros() ) * playbackRate() + dataStartMicros();
      * </code>
-     * 
-     * @param playMicros
+     *
+     * @param micros Some time.
      * @return data time to be display at specified play time.
      */
-    public long fromMasterMicros( long playMicros );
+    public long fromMaster( long micros );
+
 
     /**
-     * @return rate of this clock compared to master clock.
+     * @param listener Listener to receive all state change notifications.
      */
-    public double rate();
+    public void addListener( SyncClockControl listener );
 
     /**
-     * @return clock The master of this PlayClock.
+     * @param listener Listener to remove from state change notifications.
      */
-    public Clock masterClock();
+    public void removeListener( SyncClockControl listener );
 
     /**
      * Applies full state of this PlayClock to some control.
      */
-    public void applyTo( PlayControl control );
+    public void applyTo( SyncClockControl control );
+
+
+    /**
+     * @return time when playback state last changed.
+     */
+    public long timeBasis();
+
+    /**
+     * Time of the master clock when playback state last changed.
+     *
+     * @return play time when the playback state last changed.
+     */
+    public long masterBasis();
 
 }
