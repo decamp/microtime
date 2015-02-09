@@ -156,7 +156,7 @@ public class FullClockTest extends JPanel {
                     Frac frac = new Frac();
                     Frac.doubleToRational( ((Number)value).doubleValue(), frac );
                     Frac.reduce( frac.mNum, frac.mDen, 1000, frac );
-                    mClock.clockSetRate( frac );
+                    mClock.clockRate( frac );
                 }
 
                 @Override
