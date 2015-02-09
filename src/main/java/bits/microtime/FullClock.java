@@ -51,7 +51,7 @@ public class FullClock implements PlayClock, ClockControl {
         mMaster = root;
         mParent = parent;
         mParentPlaying = parent.isPlaying();
-        parent.getRate( mParentRate );
+        mParentRate.set( parent.rate() );
         mRate.set( mParentRate );
     }
 
@@ -74,8 +74,8 @@ public class FullClock implements PlayClock, ClockControl {
     }
 
     @Override
-    public void getRate( Frac out ) {
-        out.set( mRate );
+    public Frac rate() {
+        return new Frac( mRate );
     }
 
 
@@ -293,7 +293,7 @@ public class FullClock implements PlayClock, ClockControl {
     }
 
     @Override
-    public void clockSetRate( Frac rate ) {
+    public void clockRate( Frac rate ) {
         synchronized( mLock ) {
             clockRate( masterMicros(), rate );
         }

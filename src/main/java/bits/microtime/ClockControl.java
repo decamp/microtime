@@ -42,6 +42,6 @@ public interface ClockControl extends SyncClockControl {
      *
      * @param rate New getRate of clock playback.
      */
-    public void clockSetRate( Frac rate );
+    public void clockRate( Frac rate );
 
 }

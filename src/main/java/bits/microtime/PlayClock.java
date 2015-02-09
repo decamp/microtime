@@ -36,9 +36,9 @@ public interface PlayClock extends Clock, EventSource<SyncClockControl> {
     public boolean isPlaying();
 
     /**
-     * @param out receives getRate of this clock relative to the master clock.
+     * @return the rate of this clock relative to the master clock.
      */
-    public void getRate( Frac out );
+    public Frac rate();
 
 
     /**
