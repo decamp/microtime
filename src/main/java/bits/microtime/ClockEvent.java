@@ -45,4 +45,21 @@ public class ClockEvent {
         mRate = rate == null ? null : new Frac( rate );
     }
 
+
+    public void apply( SyncClockControl target ) {
+        switch( mId ) {
+        case CLOCK_START:
+            target.clockStart( mExec );
+            break;
+        case CLOCK_STOP:
+            target.clockStop( mExec );
+            break;
+        case CLOCK_RATE:
+            target.clockRate( mExec, mRate );
+            break;
+        case CLOCK_SEEK:
+            target.clockSeek( mExec, mSeekMicros );
+        }
+    }
+
 }
