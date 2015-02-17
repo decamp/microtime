@@ -29,10 +29,11 @@ public class FullClock implements PlayClock, ClockControl {
     private       boolean mRequestPlaying = false;
     private final Frac    mRequestRate    = new Frac( 1, 1 );
 
-    private       boolean mPlaying     = false;
-    private final Frac    mRate        = new Frac( 1, 1 );
-    private       long    mMasterBasis = 0;
-    private       long    mThisBasis   = 0;
+    private final ClockState mState = new ClockState();
+//    private       boolean mPlaying     = false;
+//    private final Frac    mRate        = new Frac( 1, 1 );
+//    private       long    mMasterBasis = 0;
+//    private       long    mThisBasis   = 0;
 
 
     private LinkedList<Reference<FullClock>> mChildren = new LinkedList<Reference<FullClock>>();
@@ -52,7 +53,7 @@ public class FullClock implements PlayClock, ClockControl {
         mParent = parent;
         mParentPlaying = parent.isPlaying();
         mParentRate.set( parent.rate() );
-        mRate.set( mParentRate );
+        mState.mRate.set( mParentRate );
     }
 
 
@@ -69,13 +70,13 @@ public class FullClock implements PlayClock, ClockControl {
     @Override
     public boolean isPlaying() {
         synchronized( mLock ) {
-            return mPlaying;
+            return mState.mPlaying;
         }
     }
 
     @Override
     public Frac rate() {
-        return new Frac( mRate );
+        return new Frac( mState.mRate );
     }
 
 
@@ -92,29 +93,14 @@ public class FullClock implements PlayClock, ClockControl {
     @Override
     public long toMaster( long dataMicros ) {
         synchronized( mLock ) {
-            if( mPlaying ) {
-                return Frac.multLong( dataMicros - mThisBasis, mRate.mDen, mRate.mNum ) + mMasterBasis;
-            }
-            if( dataMicros < mThisBasis ) {
-                return Long.MIN_VALUE;
-
-            } else if( dataMicros > mThisBasis ) {
-                return Long.MAX_VALUE;
-
-            } else {
-                return mMasterBasis;
-            }
+            return mState.toMaster( dataMicros );
         }
     }
 
     @Override
     public long fromMaster( long playMicros ) {
         synchronized( mLock ) {
-            if( mPlaying ) {
-                return Frac.multLong( playMicros - mMasterBasis, mRate.mNum, mRate.mDen ) + mThisBasis;
-            } else {
-                return mThisBasis;
-            }
+            return mState.fromMaster( playMicros );
         }
     }
 
@@ -142,15 +128,7 @@ public class FullClock implements PlayClock, ClockControl {
     @Override
     public void applyTo( SyncClockControl control ) {
         synchronized( mLock ) {
-            if( mPlaying ) {
-                control.clockRate( mMasterBasis, mRate );
-                control.clockSeek( mMasterBasis, mThisBasis );
-                control.clockStart( mMasterBasis );
-            } else {
-                control.clockStop( mMasterBasis );
-                control.clockRate( mMasterBasis, mRate );
-                control.clockSeek( mMasterBasis, mThisBasis );
-            }
+            mState.applyTo( control );
         }
     }
 
@@ -199,14 +177,14 @@ public class FullClock implements PlayClock, ClockControl {
     @Override
     public long timeBasis() {
         synchronized( this ) {
-            return mThisBasis;
+            return mState.mTimeBasis;
         }
     }
 
     @Override
     public long masterBasis() {
         synchronized( this ) {
-            return mMasterBasis;
+            return mState.mMasterBasis;
         }
     }
 
@@ -223,8 +201,7 @@ public class FullClock implements PlayClock, ClockControl {
             if( !mParentPlaying ) {
                 return;
             }
-            mPlaying  = true;
-            mMasterBasis = exec;
+            mState.clockStart( exec );
             castClockStart( exec );
         }
     }
@@ -239,8 +216,7 @@ public class FullClock implements PlayClock, ClockControl {
             if( !mParentPlaying ) {
                 return;
             }
-            updateBases( exec );
-            mPlaying = false;
+            mState.clockStop( exec );
             castClockStop( exec );
         }
     }
@@ -248,9 +224,9 @@ public class FullClock implements PlayClock, ClockControl {
     @Override
     public void clockSeek( long exec, long seek ) {
         synchronized( mLock ) {
-            updateBases( exec );
-            long masterDelta = Frac.multLong( seek - mThisBasis, mRate.mDen, mRate.mNum );
-            mThisBasis = seek;
+            mState.updateBases( exec );
+            long masterDelta = Frac.multLong( seek - mState.mTimeBasis, mState.mRate.mDen, mState.mRate.mNum );
+            mState.clockSeek( exec, seek );
             castClockSeek( exec, masterDelta, seek );
         }
     }
@@ -261,10 +237,10 @@ public class FullClock implements PlayClock, ClockControl {
             if( mRequestRate.equals( rate ) ) {
                 return;
             }
-            updateBases( exec );
+            mState.updateBases( exec );
             mRequestRate.set( rate );
-            Frac.multFrac( mParentRate.mNum, mParentRate.mDen, mRequestRate.mNum, mRequestRate.mDen, mRate );
-            castClockRate( exec, new Frac( mRate ) );
+            Frac.multFrac( mParentRate.mNum, mParentRate.mDen, mRequestRate.mNum, mRequestRate.mDen, mState.mRate );
+            castClockRate( exec, new Frac( mState.mRate ) );
         }
     }
 
@@ -314,8 +290,7 @@ public class FullClock implements PlayClock, ClockControl {
         if( !mRequestPlaying ) {
             return;
         }
-        updateBases( exec );
-        mPlaying  = true;
+        mState.clockStart( exec );
         castClockStart( exec );
     }
 
@@ -328,8 +303,7 @@ public class FullClock implements PlayClock, ClockControl {
         if( !mRequestPlaying ) {
             return;
         }
-        updateBases( exec );
-        mPlaying = false;
+        mState.clockStop( exec );
         castClockStop( exec );
     }
 
@@ -338,9 +312,9 @@ public class FullClock implements PlayClock, ClockControl {
         if( !mRequestPlaying ) {
             return;
         }
-        updateBases( exec );
-        mThisBasis += Frac.multLong( rootDelta, mRate.mNum, mRate.mDen, Frac.ROUND_NEAR_INF );
-        castClockSeek( exec, rootDelta, mThisBasis );
+        mState.updateBases( exec );
+        mState.mTimeBasis += Frac.multLong( rootDelta, mState.mRate.mNum, mState.mRate.mDen, Frac.ROUND_NEAR_INF );
+        castClockSeek( exec, rootDelta, mState.mTimeBasis );
     }
 
 
@@ -348,10 +322,10 @@ public class FullClock implements PlayClock, ClockControl {
         if( mParentRate.equals( rate ) ) {
             return;
         }
-        updateBases( exec );
         mParentRate.set( rate );
-        Frac.multFrac( mParentRate.mNum, mParentRate.mDen, mRequestRate.mNum, mRequestRate.mDen, mRate );
-        castClockRate( exec, new Frac( mRate ) );
+        mState.updateBases( exec );
+        Frac.multFrac( mParentRate.mNum, mParentRate.mDen, mRequestRate.mNum, mRequestRate.mDen, mState.mRate );
+        castClockRate( exec, new Frac( mState.mRate ) );
     }
 
 
@@ -438,12 +412,5 @@ public class FullClock implements PlayClock, ClockControl {
         }
     }
 
-
-    private void updateBases( long exec ) {
-        if( mPlaying ) {
-            mThisBasis += Frac.multLong( exec - mMasterBasis, mRate.mNum, mRate.mDen );
-        }
-        mMasterBasis = exec;
-    }
 
 }
