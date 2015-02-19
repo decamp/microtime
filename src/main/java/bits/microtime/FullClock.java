@@ -30,10 +30,8 @@ public class FullClock implements PlayClock, ClockControl {
     private final Frac    mRequestRate    = new Frac( 1, 1 );
 
     private final ClockState mState = new ClockState();
-//    private       boolean mPlaying     = false;
-//    private final Frac    mRate        = new Frac( 1, 1 );
-//    private       long    mMasterBasis = 0;
-//    private       long    mThisBasis   = 0;
+
+    private long mExecDelayMicros = 50000L;
 
 
     private LinkedList<Reference<FullClock>> mChildren = new LinkedList<Reference<FullClock>>();
@@ -54,6 +52,33 @@ public class FullClock implements PlayClock, ClockControl {
         mParentPlaying = parent.isPlaying();
         mParentRate.set( parent.rate() );
         mState.mRate.set( mParentRate );
+    }
+
+
+    /**
+     * One difficulty presented by the the AsyncClockControl is that it
+     * does not specify when precisely a command should be come into
+     * effect. By default, the time would be the current time.
+     * However, this does not give any users of the clock time
+     * to prepare for changes. An audio player, for example,
+     * cannot skip to another point in an audio file in 0 seconds.
+     * This method gives the user the ability to specify the default
+     * delay used on all AsyncClockControl methods to mitigate this
+     * probelm.
+     *
+     * @param delay Number of micros to delay timing of clock change commands.
+     */
+    public void asyncDelayMicros( long delay ) {
+        mExecDelayMicros = delay;
+    }
+
+    /**
+     * @return the number of microseconds that are automatically added to the
+     *         execution time of any calls made to {@link ClockControl} methods.
+     * @see #asyncDelayMicros( long )
+     */
+    public long asyncDelayMicros() {
+        return mExecDelayMicros;
     }
 
 
@@ -250,28 +275,28 @@ public class FullClock implements PlayClock, ClockControl {
     @Override
     public void clockStart() {
         synchronized( mLock ) {
-            clockStart( masterMicros() );
+            clockStart( masterMicros() + mExecDelayMicros );
         }
     }
 
     @Override
     public void clockStop() {
         synchronized( mLock ) {
-            clockStop( masterMicros() );
+            clockStop( masterMicros() + mExecDelayMicros );
         }
     }
 
     @Override
     public void clockSeek( long seekMicros ) {
         synchronized( mLock ) {
-            clockSeek( masterMicros(), seekMicros );
+            clockSeek( masterMicros() + mExecDelayMicros, seekMicros );
         }
     }
 
     @Override
     public void clockRate( Frac rate ) {
         synchronized( mLock ) {
-            clockRate( masterMicros(), rate );
+            clockRate( masterMicros() + mExecDelayMicros, rate );
         }
     }
 
