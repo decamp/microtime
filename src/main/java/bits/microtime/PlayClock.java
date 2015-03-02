@@ -23,7 +23,7 @@ import bits.util.event.EventSource;
  *
  * @author Philip DeCamp
  */
-public interface PlayClock extends Clock, EventSource<SyncClockControl> {
+public interface PlayClock extends Clock, ClockControl, EventSource<SyncClockControl> {
 
     /**
      * @return time of this clock
@@ -140,10 +140,5 @@ public interface PlayClock extends Clock, EventSource<SyncClockControl> {
      * @param out receives getRate of this clock compared to parent clock.
      */
     public void rateRelativeToParent( Frac out );
-
-
-
-
-
 
 }
