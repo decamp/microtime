@@ -158,17 +158,7 @@ public class FullClock implements PlayClock, ClockControl {
     }
 
 
-    /**
-     * PlayClocks actually have two input references:
-     * <p>1. All PlayClocks have a "master clock" that should closely follow system time. <br>
-     * <p>2. Optionally, some PlayClocks may have a "parent PlayClock" that can provide for heirarchical
-     * control. While all clocks in a tree will base time readings on the master clock, their
-     * playback state can be affected by accessing any of it's parent clocks. Stopping a PlayClock
-     * will cause all children to stop, and doubling the getRate of a PlayClock will cause
-     * all it's children to double their rates.
-     *
-     * @return newly created child clock.
-     */
+    @Override
     public FullClock createChild() {
         synchronized( mLock ) {
             FullClock clock = new FullClock( mLock, mMaster, this );
@@ -177,23 +167,17 @@ public class FullClock implements PlayClock, ClockControl {
         }
     }
 
-    /**
-     * @return true if clock is set to play if parent is playing.
-     */
+    @Override
     public PlayClock parentClock() {
         return mParent;
     }
 
-    /**
-     * @return true iff this clock plays when parent plays.
-     */
+    @Override
     public boolean isPlayingRelativeToParent() {
         return mRequestPlaying;
     }
 
-    /**
-     * @param out receives getRate of this clock compared to parent clock.
-     */
+    @Override
     public void rateRelativeToParent( Frac out ) {
         out.set( mRequestRate );
     }
