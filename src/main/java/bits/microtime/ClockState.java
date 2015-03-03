@@ -67,17 +67,24 @@ public class ClockState implements SyncClockControl {
     }
 
 
-    public void applyTo( SyncClockControl control ) {
+    public void applyTo( SyncClockControl target ) {
+        applyTo( mMasterBasis, target );
+    }
+
+
+    public void applyTo( long exec, SyncClockControl target ) {
+        long seek = exec == mMasterBasis ? mTimeBasis : fromMaster( exec );
         if( mPlaying ) {
-            control.clockRate( mMasterBasis, mRate );
-            control.clockSeek( mMasterBasis, mTimeBasis );
-            control.clockStart( mMasterBasis );
+            target.clockRate( exec, mRate );
+            target.clockSeek( exec, seek );
+            target.clockStart( exec );
         } else {
-            control.clockStop( mMasterBasis );
-            control.clockRate( mMasterBasis, mRate );
-            control.clockSeek( mMasterBasis, mTimeBasis );
+            target.clockStop( exec );
+            target.clockRate( exec, mRate );
+            target.clockSeek( exec, seek );
         }
     }
+
 
 
     void updateBases( long exec ) {

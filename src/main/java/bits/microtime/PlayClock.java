@@ -93,9 +93,18 @@ public interface PlayClock extends Clock, ClockControl, EventSource<SyncClockCon
     public void removeListener( SyncClockControl listener );
 
     /**
-     * Applies full state of this PlayClock to some control.
+     * Applies full state of this PlayClock as if that control
+     * received the commands at the same time as this clock.
      */
-    public void applyTo( SyncClockControl control );
+    public void applyTo( SyncClockControl target );
+
+    /**
+     * Applies full state of this PlayClock to another control
+     * but potentially with different execution time.
+     * For the most part, the target should have nearly identical
+     * state to this clock, but with small rounding errors.
+     */
+    public void applyTo( long exec, SyncClockControl target );
 
 
     /**

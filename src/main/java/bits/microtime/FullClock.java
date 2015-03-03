@@ -151,9 +151,16 @@ public class FullClock implements PlayClock, ClockControl {
     }
 
     @Override
-    public void applyTo( SyncClockControl control ) {
+    public void applyTo( SyncClockControl target ) {
         synchronized( mLock ) {
-            mState.applyTo( control );
+            mState.applyTo( target );
+        }
+    }
+
+    @Override
+    public void applyTo( long exec, SyncClockControl target ) {
+        synchronized( mLock ) {
+            mState.applyTo( exec, target );
         }
     }
 
