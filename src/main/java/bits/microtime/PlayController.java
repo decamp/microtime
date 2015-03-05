@@ -20,7 +20,7 @@ public class PlayController implements Ticker {
      */
     public static PlayController create( Clock masterClock ) {
         FullClock state = new FullClock( masterClock );
-        return new PlayController( null, state, Mode.AUTO, 0, 0, 1.0 );
+        return new PlayController( null, state, Mode.AUTO, 0, 0 );
     }
 
     /**
@@ -28,7 +28,7 @@ public class PlayController implements Ticker {
      */
     public static PlayController createAuto() {
         FullClock state = new FullClock( Clock.SYSTEM_CLOCK );
-        return new PlayController( null, state, Mode.AUTO, 0, 0, 1.0 );
+        return new PlayController( null, state, Mode.AUTO, 0, 0 );
     }
 
     /**
@@ -37,24 +37,7 @@ public class PlayController implements Ticker {
     public static PlayController createRealtime() {
         ManualClock clock = new ManualClock( System.currentTimeMillis() * 1000L );
         FullClock state = new FullClock( clock );
-        return new PlayController( clock, state, Mode.REALTIME, Long.MIN_VALUE, 0, 1.0 );
-    }
-
-    /**
-     * @param startMicros  Time of clock upon first update.
-     * @param rate         Rate of time relative to real time.
-     *
-     * @return a PlaybackContoller that syncs time to the system clock on each time update.
-     */
-    public static PlayController createRealtime( long startMicros, double rate ) {
-        ManualClock clock = new ManualClock( startMicros );
-        FullClock state = new FullClock( clock );
-
-        if( rate == 1.0 ) {
-            return new PlayController( clock, state, Mode.REALTIME, startMicros, 0, 1.0 );
-        } else {
-            return new PlayController( clock, state, Mode.REALTIME_SCALED, startMicros, 0, rate );
-        }
+        return new PlayController( clock, state, Mode.REALTIME, Long.MIN_VALUE, 0 );
     }
 
     /**
@@ -65,15 +48,14 @@ public class PlayController implements Ticker {
     public static PlayController createStepping( long startMicros, long stepMicros ) {
         ManualClock clock = new ManualClock( startMicros );
         FullClock state = new FullClock( clock );
-        return new PlayController( clock, state, Mode.STEPPING, startMicros, stepMicros, 1.0 );
+        return new PlayController( clock, state, Mode.STEPPING, startMicros, stepMicros );
     }
 
 
     private static enum Mode {
         AUTO,
         STEPPING,
-        REALTIME,
-        REALTIME_SCALED
+        REALTIME
     }
 
 
@@ -83,9 +65,6 @@ public class PlayController implements Ticker {
     private final Mode mMode;
     private final long mStartMicros;
     private final long mStepMicros;
-    private final double mRate;
-
-    private long mSystemOffset = Long.MIN_VALUE;
     private int mStep = 0;
 
 
@@ -93,18 +72,14 @@ public class PlayController implements Ticker {
                             FullClock state,
                             Mode mode,
                             long startMicros,
-                            long stepMicros,
-                            double rate )
+                            long stepMicros )
     {
         mUpdateClock = updateClock;
         mFullClock = state;
-
         mMode = mode;
         mStartMicros = startMicros;
         mStepMicros = stepMicros;
-        mRate = rate;
     }
-    
 
 
     public ClockControl control() {
@@ -132,30 +107,11 @@ public class PlayController implements Ticker {
      * was constructed.
      */
     public void tick() {
-        long t = 0;
+        long t;
 
         switch( mMode ) {
         case REALTIME:
-            if( mSystemOffset == Long.MIN_VALUE ) {
-                if( mStartMicros == Long.MIN_VALUE ) {
-                    mSystemOffset = 0L;
-                    t = System.currentTimeMillis() * 1000L;
-                } else {
-                    mSystemOffset = System.currentTimeMillis() * 1000L - mStartMicros;
-                    t = mStartMicros;
-                }
-            } else {
-                t = System.currentTimeMillis() * 1000L - mSystemOffset;
-            }
-            break;
-
-        case REALTIME_SCALED:
-            if( mSystemOffset == Long.MIN_VALUE ) {
-                mSystemOffset = System.currentTimeMillis() * 1000L;
-                t = mStartMicros;
-            } else {
-                t = (long)((System.currentTimeMillis() * 1000L - mSystemOffset) * mRate) + mStartMicros;
-            }
+            t = System.currentTimeMillis() * 1000L;
             break;
 
         case STEPPING:
@@ -169,6 +125,5 @@ public class PlayController implements Ticker {
 
         mUpdateClock.micros( t );
     }
-
 
 }

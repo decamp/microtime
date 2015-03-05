@@ -324,13 +324,13 @@ public class FullClock implements PlayClock, ClockControl {
     }
 
 
-    void parentClockSkip( long exec, long rootDelta ) {
+    void parentClockSkip( long exec, long masterDelta ) {
         if( !mRequestPlaying ) {
             return;
         }
         mState.updateBases( exec );
-        mState.mTimeBasis += Frac.multLong( rootDelta, mState.mRate.mNum, mState.mRate.mDen, Frac.ROUND_NEAR_INF );
-        castClockSeek( exec, rootDelta, mState.mTimeBasis );
+        mState.mTimeBasis += Frac.multLong( masterDelta, mState.mRate.mNum, mState.mRate.mDen );
+        castClockSeek( exec, masterDelta, mState.mTimeBasis );
     }
 
 
