@@ -60,12 +60,15 @@ public class PlayController implements Ticker {
 
 
     private final ManualClock mUpdateClock;
-    private final FullClock mFullClock;
+    private final FullClock   mFullClock;
 
     private final Mode mMode;
     private final long mStartMicros;
     private final long mStepMicros;
-    private int mStep = 0;
+
+    private int mTickCount = 0;
+
+    private volatile Ticker vTickCaster;
 
 
     private PlayController( ManualClock updateClock,
@@ -112,18 +115,33 @@ public class PlayController implements Ticker {
         switch( mMode ) {
         case REALTIME:
             t = System.currentTimeMillis() * 1000L;
+            mUpdateClock.micros( t );
             break;
 
         case STEPPING:
-            t = mStartMicros + mStepMicros * mStep++;
+            t = mStartMicros + mStepMicros * mTickCount++;
+            mUpdateClock.micros( t );
             break;
 
         case AUTO:
         default:
-            return;
+            break;
         }
 
-        mUpdateClock.micros( t );
+        Ticker cast = vTickCaster;
+        if( cast != null ) {
+            cast.tick();
+        }
+    }
+
+
+    public synchronized void addTicker( Ticker t ) {
+        vTickCaster = TickCaster.add( vTickCaster, t );
+    }
+
+
+    public synchronized void removeTicker( Ticker t ) {
+        vTickCaster = TickCaster.remove( vTickCaster, t );
     }
 
 }
