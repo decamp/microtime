@@ -106,7 +106,7 @@ public class TimeBlock implements TimeRanged, Comparable<TimeRanged> {
     }
     
     /**
-     * @param mictro  time in microseconds
+     * @param micro  time in microseconds
      * @return true iff <code>micro</code> is within bounds of TimeBlock.
      */
     public boolean contains( long micro ) {

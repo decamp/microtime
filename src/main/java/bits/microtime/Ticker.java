@@ -10,5 +10,5 @@ package bits.microtime;
  * @author Philip DeCamp
  */
 public interface Ticker {
-    public void tick();
+    void tick();
 }

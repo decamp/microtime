@@ -11,9 +11,7 @@ import static org.junit.Assert.*;
  */
 public class TimeSetTest {
 
-
     public TimeSetTest() {}
-
 
     @Test
     public void testIntersect() {
@@ -66,7 +64,6 @@ public class TimeSetTest {
         assertEquals( 550L, tb.startMicros() );
         assertEquals( 560L, tb.stopMicros() );
     }
-
 
     @Test
     public void testSubtractFrom() {

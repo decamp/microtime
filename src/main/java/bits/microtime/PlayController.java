@@ -52,7 +52,7 @@ public class PlayController implements Ticker {
     }
 
 
-    private static enum Mode {
+    private enum Mode {
         AUTO,
         STEPPING,
         REALTIME

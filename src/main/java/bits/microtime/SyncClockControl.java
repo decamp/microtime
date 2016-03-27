@@ -19,20 +19,19 @@ package bits.microtime;
  * @author Philip DeCamp
  */
 public interface SyncClockControl {
-
     /**
      * Starts the clock running. If clock is already running, call has no effect.
      *
      * @param execMicros Time on master clock when play begins.
      */
-    public void clockStart( long execMicros );
+    void clockStart( long execMicros );
 
     /**
      * Stops the clock running. If clock is already stopped, call has no effect.
      *
      * @param execMicros Time on master clock to when play stops.
      */
-    public void clockStop( long execMicros );
+    void clockStop( long execMicros );
 
     /**
      * Causes clock to skip to a specified time. Seek works regardlless if clock
@@ -41,7 +40,7 @@ public interface SyncClockControl {
      * @param execMicros Time on master clock when seek executes.
      * @param seekMicros Time to set clock to.
      */
-    public void clockSeek( long execMicros, long seekMicros );
+    void clockSeek( long execMicros, long seekMicros );
 
     /**
      * Sets the getRate of this clock relative to a parent clock.
@@ -49,6 +48,5 @@ public interface SyncClockControl {
      * @param execMicros Time on master clock when change executes.
      * @param rate New getRate of clock playback.
      */
-    public void clockRate( long execMicros, Frac rate );
-
+    void clockRate( long execMicros, Frac rate );
 }

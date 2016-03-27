@@ -13,7 +13,7 @@ import java.util.Comparator;
  */
 public interface TimeStamped {
     
-    public static final Comparator<TimeStamped> START_TIME_ORDER = new Comparator<TimeStamped>() {
+    Comparator<TimeStamped> START_TIME_ORDER = new Comparator<TimeStamped>() {
         public int compare( TimeStamped t1, TimeStamped t2 ) {
             long v1 = t1.startMicros();
             long v2 = t2.startMicros();
@@ -23,6 +23,6 @@ public interface TimeStamped {
         }
     };
     
-    public long startMicros();
+    long startMicros();
     
 }

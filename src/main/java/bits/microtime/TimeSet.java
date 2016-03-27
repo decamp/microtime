@@ -461,7 +461,6 @@ public class TimeSet extends AbstractSet<TimeBlock> {
         return ret;
     }
 
-
     @Override
     @SuppressWarnings( "unchecked" )
     public <T> T[] toArray( T[] a ) {
@@ -485,7 +484,6 @@ public class TimeSet extends AbstractSet<TimeBlock> {
 
         return a;
     }
-
 
 
     private void insertDisjoint( long startMicros, long stopMicros ) {
@@ -529,7 +527,6 @@ public class TimeSet extends AbstractSet<TimeBlock> {
 
     private static final boolean BLACK = false;
     private static final boolean RED   = true;
-
 
 
     private void insertNode( Node node, Node parent, boolean left ) {
@@ -982,7 +979,6 @@ public class TimeSet extends AbstractSet<TimeBlock> {
     /*********************************
      * View classes
      *********************************/
-
 
     private class TimeIterator implements Iterator<TimeBlock> {
 

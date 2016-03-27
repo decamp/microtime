@@ -13,11 +13,11 @@ import java.util.Comparator;
  */
 public interface TimeRanged extends TimeStamped {
     
-    public long startMicros();
-    public long stopMicros();
+    long startMicros();
+    long stopMicros();
 
     
-    public static final Comparator<TimeRanged> STOP_TIME_ORDER = new Comparator<TimeRanged>() {
+    Comparator<TimeRanged> STOP_TIME_ORDER = new Comparator<TimeRanged>() {
         public int compare(TimeRanged t1, TimeRanged t2) {
             long v1 = t1.stopMicros();
             long v2 = t2.stopMicros();
@@ -29,7 +29,7 @@ public interface TimeRanged extends TimeStamped {
     };
 
     
-    public static final Comparator<TimeRanged> START_STOP_TIME_ORDER = new Comparator<TimeRanged>() {
+    Comparator<TimeRanged> START_STOP_TIME_ORDER = new Comparator<TimeRanged>() {
         public int compare( TimeRanged t1, TimeRanged t2 ) {
             long v1 = t1.startMicros();
             long v2 = t2.startMicros();

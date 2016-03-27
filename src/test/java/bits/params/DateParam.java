@@ -13,14 +13,14 @@ import java.util.Date;
  * @author decamp
  */
 public class DateParam extends AbstractParam<Date> {
-    
-    public static DateParam newInstance(String name, Date initValue) {
-        return new DateParam(name, initValue);
+
+    public static DateParam newInstance( String name, Date initValue ) {
+        return new DateParam( name, initValue );
     }
-    
-    
-    private DateParam(String name, Date initValue) {
-        super(Date.class, name, "", ParamWidgetType.TEXT_FIELD, initValue);
+
+
+    private DateParam( String name, Date initValue ) {
+        super( Date.class, name, "", ParamWidgetType.TEXT_FIELD, initValue );
     }
 
 }

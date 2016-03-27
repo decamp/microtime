@@ -13,12 +13,28 @@ package bits.microtime;
  */
 public interface Clock {
 
-    public static final Clock SYSTEM_CLOCK = new Clock() {
+    /**
+     * Monotonic timer.
+     */
+    Clock HOST_CLOCK = new Clock() {
+        @Override
+        public long micros() {
+            return System.nanoTime() / 1000L;
+        }
+    };
+
+    /**
+     * Provides access to absolute time since Unix epoch. May not be monotonic if, for example, time is corrected.
+     */
+    Clock ABSOLUTE_CLOCK = new Clock() {
         public long micros() {
             return System.currentTimeMillis() * 1000L;
         }
     };
 
-    public long micros();
+    long micros();
+
+    @Deprecated
+    Clock SYSTEM_CLOCK = ABSOLUTE_CLOCK;
 
 }

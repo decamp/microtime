@@ -14,7 +14,7 @@ import bits.util.event.EventCaster;
  * Params. ParamListeners added to a CompoundParam will receive notifications
  * from all child Params, plus state change notifications from the
  * CompoundParam.
- * 
+ *
  * @author decamp
  */
 @SuppressWarnings( "rawtypes" )
@@ -26,15 +26,15 @@ public class CompoundParam implements Param<Void> {
     }
 
 
-    private final String mName;
-    private final Param[] mParams;
+    private final String    mName;
+    private final Param[]   mParams;
     private final boolean[] mParamEnabled;
 
     private final EventCaster<ParamListener> mNewCaster;
     private final EventCaster<ParamListener> mRepeatCaster;
 
-    private String mDescription = null;
-    private boolean mEnabled = true;
+    private String  mDescription = null;
+    private boolean mEnabled     = true;
 
 
     private CompoundParam( String name, Param[] params ) {
@@ -42,14 +42,13 @@ public class CompoundParam implements Param<Void> {
         mParams = params;
         mParamEnabled = new boolean[params.length];
 
-        mNewCaster    = EventCaster.create( ParamListener.class, EventCaster.THREADING_AWT );
+        mNewCaster = EventCaster.create( ParamListener.class, EventCaster.THREADING_AWT );
         mRepeatCaster = EventCaster.create( ParamListener.class, EventCaster.THREADING_SYNCHRONOUS );
 
         for( Param p : params ) {
             p.addListener( mRepeatCaster.cast() );
         }
     }
-
 
 
     public int getParamCount() {
@@ -67,7 +66,6 @@ public class CompoundParam implements Param<Void> {
     }
 
 
-
     public String getName() {
         return mName;
     }
@@ -80,8 +78,9 @@ public class CompoundParam implements Param<Void> {
 
     public void setDescription( Object source, String desc ) {
         synchronized( this ) {
-            if( desc == mDescription || desc != null && desc.equals( mDescription ) )
+            if( desc == mDescription || desc != null && desc.equals( mDescription ) ) {
                 return;
+            }
 
             mDescription = desc;
             mNewCaster.cast().paramStateChanged( source, this, Param.State.DESCRIPTION );
@@ -104,8 +103,9 @@ public class CompoundParam implements Param<Void> {
 
     public void setEnabled( Object source, boolean enabled ) {
         synchronized( this ) {
-            if( enabled == mEnabled )
+            if( enabled == mEnabled ) {
                 return;
+            }
 
             mEnabled = enabled;
             mNewCaster.cast().paramStateChanged( source, this, Param.State.ENABLE );

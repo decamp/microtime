@@ -21,7 +21,7 @@ public class StringParam extends AbstractParam<String> {
         return new StringParam( name, initValue );
     }
 
-    
+
     private StringParam( String name, String initValue ) {
         super( String.class, name, null, ParamWidgetType.TEXT_FIELD, initValue );
     }

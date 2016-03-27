@@ -6,7 +6,7 @@ import static java.lang.Math.*;
 /**
  * Rational numbers.
  *
- * Most of the original code by: Michael Niedermayer <michaelni@gmx.at>
+ * Most of the original code by: Michael Niedermayer - michaelni@gmx.at
  * Ported by: Philip DeCamp
  */
 public class Frac implements Comparable<Frac> {
@@ -26,7 +26,7 @@ public class Frac implements Comparable<Frac> {
      * @param b Arbitrary number
      * @return Largest number that evenly divides both a and b. <br>
      *         This number will be non-negative with one exception: <br>
-     *         If a == Integer.MIN_VALUE && b == Integer.MIN_VALUE, then Integer.MIN_VALUE will be returned.
+     *         If {@code a == Integer.MIN_VALUE && b == Integer.MIN_VALUE}, then Integer.MIN_VALUE will be returned.
      */
     public static int gcd( int a, int b ) {
         while( b != 0 ) {
@@ -44,7 +44,7 @@ public class Frac implements Comparable<Frac> {
      * @param b Arbitrary number
      * @return Largest number that evenly divides both a and b. <br>
      *         This number will be non-negative with one exception: <br>
-     *         If a == Long.MIN_VALUE && b == Long.MIN_VALUE, then Long.MIN_VALUE will be returned.
+     *         If {@code a == Long.MIN_VALUE && b == Long.MIN_VALUE}, then Long.MIN_VALUE will be returned.
      */
     public static long gcd( long a, long b ) {
         while( b != 0 ) {
@@ -170,7 +170,7 @@ public class Frac implements Comparable<Frac> {
      * following criteria:
      *
      * <ul>
-     * <li>mDen >= 0 [Sign of number determined by numerator]
+     * <li>{@code mDen >= 0} [Sign of number determined by numerator]
      * <li>If mNum == 0, then mDen == 1. [Canonical zero is 0/1]
      * <li>If mDen == 0, then mNum is in set { -1, 0, 1 }. [Canonical -inf = -1/0, NaN = 0/0, inf = 1/0]
      * <li>The greatest common divisor of the numerator and denomanator is 1.
@@ -344,7 +344,7 @@ public class Frac implements Comparable<Frac> {
      * @param aDen Denominator of first rational.
      * @param bNum Numerator of second rational
      * @param bDen Denominator of second rational.
-     * @return 0 if a==b or if one of the values is of the form 0/0, 1 if a > b, -1 if a < b.
+     * @return 0 if {@code a==b} or if one of the values is of the form 0/0, 1 if {@code a > b}, -1 if {@code a < b}.
      */
     public static int cmpQ( int aNum, int aDen, int bNum, int bDen ) {
         long tmp = aNum * (long)bDen - bNum * (long)aDen;

@@ -24,12 +24,13 @@ public abstract class AbstractParam<V> implements Param<V> {
     private V mValue;
 
 
-    protected AbstractParam( Class<V> valueClass,
-                             String name,
-                             String description,
-                             ParamWidgetType widgetType,
-                             V value )
-    {
+    protected AbstractParam(
+            Class<V> valueClass,
+            String name,
+            String description,
+            ParamWidgetType widgetType,
+            V value
+    ) {
         mValueClass = valueClass;
         mName = name == null ? "" : name;
         mDescription = description == null ? "" : description;

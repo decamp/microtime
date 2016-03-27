@@ -11,14 +11,14 @@ import bits.util.event.EventSource;
 
 /**
  * Represents a clock that can be paused and that can run at
- * an arbitrary getRate compared to some reference clock.
+ * an arbitrary rate compared to some reference clock.
  *
  * <p>PlayClocks actually have two possible references:
  * <p>1. All PlayClocks have a "master clock" that should closely follow system time. <br>
  * <p>2. Optionally, some PlayClocks may have a "parent PlayClock" that can provide for heirarchical
  * control. While all clocks in a tree will base time readings on the master clock, their
  * playback state can be affected by accessing any of it's parent clocks. Stopping a PlayClock
- * will cause all children to stop, and doubling the getRate of a PlayClock will cause
+ * will cause all children to stop, and doubling the rate of a PlayClock will cause
  * all it's children to double their rates.
  *
  * @author Philip DeCamp
@@ -28,23 +28,23 @@ public interface PlayClock extends Clock, ClockControl, EventSource<SyncClockCon
     /**
      * @return time of this clock
      */
-    public long micros();
+    long micros();
 
     /**
      * @return true iff playback state is playing
      */
-    public boolean isPlaying();
+    boolean isPlaying();
 
     /**
      * @return the rate of this clock relative to the master clock.
      */
-    public Frac rate();
+    Frac rate();
 
 
     /**
      * @return current time of the master of this clock
      */
-    public long masterMicros();
+    long masterMicros();
 
     /**
      * The master clock is considered the root timekeeping clock.
@@ -55,48 +55,48 @@ public interface PlayClock extends Clock, ClockControl, EventSource<SyncClockCon
      *
      * @return clock The master of this PlayClock.
      */
-    public Clock masterClock();
+    Clock masterClock();
 
     /**
      * Computes the time on the master clock for a time on this PlayClock.
-     * If <code>isPlaying()</code>, this is equivalent to: <br />
-     * <code>
+     * If {@code isPlaying()}, this is equivalent to: <br>
+     * {@code
      * ( dataMicros - dataStartMicros() ) / playbackRate() + playStartMicros();
-     * </code>
+     * }
      *
      * @param micros Some time
      * @return playback time when data time would be displayed.
      */
-    public long toMaster( long micros );
+    long toMaster( long micros );
 
     /**
      * Computes the time on this PlayClock for a time on the master clock.
-     * If <code>isPlaying()</code>, this is equivalent to: <br/>
-     * <code>
+     * If {@code isPlaying()}, this is equivalent to: <br>
+     * {@code
      * ( playMicros - playStartMicros() ) * playbackRate() + dataStartMicros();
-     * </code>
+     * }
      *
      * @param micros Some time.
      * @return data time to be display at specified play time.
      */
-    public long fromMaster( long micros );
+    long fromMaster( long micros );
 
 
     /**
      * @param listener Listener to receive all state change notifications.
      */
-    public void addListener( SyncClockControl listener );
+    void addListener( SyncClockControl listener );
 
     /**
      * @param listener Listener to remove from state change notifications.
      */
-    public void removeListener( SyncClockControl listener );
+    void removeListener( SyncClockControl listener );
 
     /**
      * Applies full state of this PlayClock as if that control
      * received the commands at the same time as this clock.
      */
-    public void applyTo( SyncClockControl target );
+    void applyTo( SyncClockControl target );
 
     /**
      * Applies full state of this PlayClock to another control
@@ -104,20 +104,20 @@ public interface PlayClock extends Clock, ClockControl, EventSource<SyncClockCon
      * For the most part, the target should have nearly identical
      * state to this clock, but with small rounding errors.
      */
-    public void applyTo( long exec, SyncClockControl target );
+    void applyTo( long exec, SyncClockControl target );
 
 
     /**
      * @return time when playback state last changed.
      */
-    public long timeBasis();
+    long timeBasis();
 
     /**
      * Time of the master clock when playback state last changed.
      *
      * @return play time when the playback state last changed.
      */
-    public long masterBasis();
+    long masterBasis();
 
 
     /**
@@ -126,28 +126,28 @@ public interface PlayClock extends Clock, ClockControl, EventSource<SyncClockCon
      * <p>2. Optionally, some PlayClocks may have a "parent PlayClock" that can provide for heirarchical
      * control. While all clocks in a tree will base time readings on the master clock, their
      * playback state can be affected by accessing any of it's parent clocks. Stopping a PlayClock
-     * will cause all children to stop, and doubling the getRate of a PlayClock will cause
+     * will cause all children to stop, and doubling the rate of a PlayClock will cause
      * all it's children to double their rates.
      *
      * @return newly created child clock.
      */
-    public PlayClock createChild();
+    PlayClock createChild();
 
     /**
      * @return parent clock used as reference time for this clock. May be {@code null}. This is not the same as
      *         the master clock.
      * @see #createChild()
      */
-    public PlayClock parentClock();
+    PlayClock parentClock();
 
     /**
      * @return true iff this clock plays when parent plays.
      */
-    public boolean isPlayingRelativeToParent();
+    boolean isPlayingRelativeToParent();
 
     /**
-     * @param out receives getRate of this clock compared to parent clock.
+     * @param out receives rate of this clock compared to parent clock.
      */
-    public void rateRelativeToParent( Frac out );
+    void rateRelativeToParent( Frac out );
 
 }

@@ -32,7 +32,7 @@ public class FullClockTest extends JPanel {
         frame.setSize( 1024, 1024 );
         frame.setLocationRelativeTo( null );
         frame.setContentPane( p );
-        frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        frame.setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
         frame.setVisible( true );
     }
 
@@ -42,7 +42,7 @@ public class FullClockTest extends JPanel {
 
 
     public FullClockTest() {
-        Clock master = Clock.SYSTEM_CLOCK;
+        Clock master = Clock.HOST_CLOCK;
         List<FullClock> parents = null;
 
         for( int i = 0; i < 3; i++ ) {
@@ -80,12 +80,11 @@ public class FullClockTest extends JPanel {
                 final int dx = w / mPanels.size() - 4;
                 int x = 0;
 
-                for( int i = 0; i < mPanels.size(); i++ ) {
-                    List<JPanel> panels = mPanels.get( i );
+                for( List<JPanel> panels : mPanels ) {
                     int y = 0;
                     int dy = h / panels.size() - 4;
 
-                    for( JPanel p: panels ) {
+                    for( JPanel p : panels ) {
                         p.setBounds( x, y, dx, dy );
                         y += dy + 4;
                     }
@@ -112,7 +111,7 @@ public class FullClockTest extends JPanel {
         Param<Double>  mRateParam;
 
         List<JComponent> mComps;
-        JButton        mSkipButton;
+        JButton          mSkipButton;
 
 
         ClockPanel( FullClock clock ) {
