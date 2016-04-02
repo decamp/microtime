@@ -27,7 +27,7 @@ public class PlayController implements Ticker {
      * @return a PlayController that does not require time updates.
      */
     public static PlayController createAuto() {
-        FullClock state = new FullClock( Clock.SYSTEM_CLOCK );
+        FullClock state = new FullClock( Clock.HOST_CLOCK );
         return new PlayController( null, state, Mode.AUTO, 0, 0 );
     }
 

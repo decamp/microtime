@@ -7,6 +7,7 @@
 package bits.microtime;
 
 import bits.util.event.EventSource;
+import bits.vec.Frac;
 
 
 /**

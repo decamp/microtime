@@ -6,6 +6,9 @@
 
 package bits.microtime;
 
+import bits.vec.Frac;
+
+
 /**
  * Enables control of a clock. ClockControl provides control over three pieces of state:
  * <ul>

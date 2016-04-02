@@ -7,6 +7,7 @@
 package bits.microtime;
 
 import bits.util.event.EventCaster;
+import bits.vec.Frac;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -34,7 +35,7 @@ public class FullClock implements PlayClock, ClockControl {
     private long mExecDelayMicros = 50000L;
 
 
-    private LinkedList<Reference<FullClock>> mChildren = new LinkedList<Reference<FullClock>>();
+    private LinkedList<Reference<FullClock>> mChildren = new LinkedList<>();
     private EventCaster<SyncClockControl>    mCaster   = null;
 
 
@@ -169,7 +170,7 @@ public class FullClock implements PlayClock, ClockControl {
     public FullClock createChild() {
         synchronized( mLock ) {
             FullClock clock = new FullClock( mLock, mMaster, this );
-            mChildren.add( new WeakReference<FullClock>( clock ) );
+            mChildren.add( new WeakReference<>( clock ) );
             return clock;
         }
     }
@@ -255,7 +256,7 @@ public class FullClock implements PlayClock, ClockControl {
             }
             mState.updateBases( exec );
             mRequestRate.set( rate );
-            Frac.multFrac( mParentRate.mNum, mParentRate.mDen, mRequestRate.mNum, mRequestRate.mDen, mState.mRate );
+            Frac.mult( mParentRate.mNum, mParentRate.mDen, mRequestRate.mNum, mRequestRate.mDen, mState.mRate );
             castClockRate( exec, new Frac( mState.mRate ) );
         }
     }
@@ -340,7 +341,7 @@ public class FullClock implements PlayClock, ClockControl {
         }
         mParentRate.set( rate );
         mState.updateBases( exec );
-        Frac.multFrac( mParentRate.mNum, mParentRate.mDen, mRequestRate.mNum, mRequestRate.mDen, mState.mRate );
+        Frac.mult( mParentRate.mNum, mParentRate.mDen, mRequestRate.mNum, mRequestRate.mDen, mState.mRate );
         castClockRate( exec, new Frac( mState.mRate ) );
     }
 

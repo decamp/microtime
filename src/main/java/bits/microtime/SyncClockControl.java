@@ -6,6 +6,7 @@
 
 package bits.microtime;
 
+import bits.vec.Frac;
 
 /**
  * SyncClockControl is like ClockControl, but each method requires a

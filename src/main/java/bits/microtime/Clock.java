@@ -13,6 +13,9 @@ package bits.microtime;
  */
 public interface Clock {
 
+    long micros();
+
+
     /**
      * Monotonic timer.
      */
@@ -31,8 +34,6 @@ public interface Clock {
             return System.currentTimeMillis() * 1000L;
         }
     };
-
-    long micros();
 
     @Deprecated
     Clock SYSTEM_CLOCK = ABSOLUTE_CLOCK;

@@ -1,5 +1,6 @@
 package bits.microtime;
 
+import bits.vec.Frac;
 
 /**
  * @author Philip DeCamp

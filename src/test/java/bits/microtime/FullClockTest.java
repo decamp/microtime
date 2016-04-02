@@ -8,6 +8,7 @@ package bits.microtime;
 
 import bits.params.*;
 import bits.params.gui.*;
+import bits.vec.Frac;
 
 import javax.swing.*;
 import java.awt.*;

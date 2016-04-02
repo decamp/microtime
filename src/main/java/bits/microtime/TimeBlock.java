@@ -72,10 +72,8 @@ public class TimeBlock implements TimeRanged, Comparable<TimeRanged> {
     }
     
     /**
-     * Returns true iff the two timeblocks overlap.  Empty TimeBlocks cannot intersect.
-     * 
-     * @param t
-     * @return
+     * @param t Arbitrary time range
+     * @return true iff this TimeRange intersects {@code t}. Empty TimeRanges may intersect.
      */
     public boolean intersects( TimeRanged t ) {
         long t1 = t.startMicros();
@@ -114,8 +112,7 @@ public class TimeBlock implements TimeRanged, Comparable<TimeRanged> {
     }
     
     /**
-     * @param t
-     * @return true iff supplied TimeRanged is completely within this TimeBlock.
+     * @return true iff supplied {@code t} is completely within this TimeBlock.
      */
     public boolean contains( TimeRanged t ) {
         long t1 = t.startMicros();
@@ -132,9 +129,7 @@ public class TimeBlock implements TimeRanged, Comparable<TimeRanged> {
     }
     
     /**
-     * Returns the union of two TimeBlocks as a TimeBlock.
-     * @param t
-     * @return The union.
+     * @return the smallest TimeBlock that contains both {@code this} and {@code t}.
      */
     public TimeBlock union( TimeRanged t ) {
         long start = Math.min( t.startMicros(), mStartMicros );
@@ -143,10 +138,7 @@ public class TimeBlock implements TimeRanged, Comparable<TimeRanged> {
     }
     
     /**
-     * Returns the intersection of two TimeBlocks as a TimeBlock, or null if they don't intersect.
-     * 
-     * @param t
-     * @return The intersection
+     * @return intersection of two TimeBlocks as a TimeBlock, or {@code} if they don't intersect.
      */
     public TimeBlock intersection( TimeRanged t ) {
         long t1 = t.startMicros();
