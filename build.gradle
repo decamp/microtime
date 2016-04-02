@@ -6,7 +6,7 @@ buildscript {
 
 group = 'com.github.decamp'
 buildDir = "$projectDir/build"
-version = '0.0.1'
+version = '0.0.2'
 description = 'Timekeeping Code'
 
 repositories {
